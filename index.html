@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <section style="background: url(./assets/img/banner.jpg);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="select-by-country">
+                        <div class="form-group">
+                            <label for="select-con">Select by Country</label>
+                            <select class="form-control" id="select-con">
+                                <option value="select you country">select you country</option>
+                            </select>
+                          </div>
+                    </div>
+                </div>
+                <div class="col-md-6 lg-3">
+                    <div class="single-coronabox world-name mb-30" >
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><img src="assets/img/world.png" alt=""></span> 
+                            <span class="counter-number world counter"></span>
+                        </div>
+                            
+                        <h4>Total Country</h4>
+                    </div>
+                    <div class="single-coronabox all-country  mb-30">
+                        <img class="country-flag" src="https://www.countryflags.io/bd/flat/64.png">
+                        <h3 class="contry-name"></h3>
+                    </div>
+                </div>
+
+                <div class="col-md-6 lg-3">
+                    <div class="single-coronabox  mb-30">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><img src="assets/img/corona1.png" alt=""></span> 
+                            <span class="counter-number confarmed counter"></span>
+                        </div>
+                            
+                        <h4>Confarmed Case</h4>
+                    </div>
+                </div>
+
+                <div class="col-md-6 lg-3">
+                    <div class="single-coronabox  mb-30">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><img src="assets/img/corona2.png" alt=""></span> 
+                            <span class="counter-number total-death counter"></span>
+                        </div>
+                            
+                        <h4>Total Death</h4>
+                    </div>
+                </div>
+
+                <div class="col-md-6 lg-3">
+                    <div class="single-coronabox  mb-30">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><img src="assets/img/corona3.png" alt=""></span> 
+                            <span class="counter-number total-recoverd counter"></span>
+                        </div>
+                            
+                        <h4>Total Recoverd</h4>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <script src="assets/js/jquery-3.3.1.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/waypoints.min.js"></script>
+    <script src="assets/js/counterup.min.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <script>
+
+        let url = "https://covid19.mathdro.id/api";
+        let urlCountry = "https://covid19.mathdro.id/api/countries";
+        
+
+
+/* for total */
+fetch(url)
+  .then(response => response.json())
+  .then(data =>  {
+    document.querySelector('.confarmed').innerHTML = data.confirmed.value;
+    document.querySelector('.total-death').innerHTML = data.deaths.value;
+    document.querySelector('.total-recoverd').innerHTML = data.recovered.value;
+  } );
+
+
+
+/*for contury  */
+
+
+
+    fetch(urlCountry)
+  .then(response => response.json())
+  .then(data => {
+    document.querySelector('.world').innerHTML = data.countries.length;
+
+    for(var i = 0; i<data.countries.length; i++){
+        let opt = document.createElement('option');
+        var newContent = document.createTextNode(data.countries[i].name); 
+        opt.appendChild(newContent)
+        document.querySelector('#select-con').appendChild(opt);
+        
+    }
+
+    document.querySelector('#select-con').addEventListener('change',()=>{
+        data.countries.forEach(element => {
+          
+
+            if(document.querySelector('#select-con').value == element.name){
+              let  contryName = element.name
+             let iso = element.iso2;
+
+                fetch(`https://covid19.mathdro.id/api/countries/${element.name}`).then((res)=> res.json()).then(result=>{
+                   document.querySelector('.world-name').style.display = 'none';
+                   document.querySelector('.all-country').style.display = 'block';
+                   document.querySelector('.all-country .contry-name').innerHTML = element.name;
+                   document.querySelector('.all-country .country-flag').setAttribute('src', `https://www.countryflags.io/${iso}/flat/64.png`);
+                    document.querySelector('.confarmed').innerHTML = result.confirmed.value;
+                     document.querySelector('.total-death').innerHTML = result.deaths.value;
+                    document.querySelector('.total-recoverd').innerHTML = result.recovered.value;
+
+                })
+            }
+           
+        });
+        })
+
+  });
+
+
+
+
+
+
+
+
+setTimeout(()=>{
+    $('.counter').counterUp({});
+},1500)
+
+    </script>
+</body>
+</html>
