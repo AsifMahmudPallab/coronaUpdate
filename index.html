@@ -12,14 +12,26 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
+                    <div class="app-header">
+                        <h2>Coronavirus Update</h2>
+                    </div>
+                </div>
+                <div class="col-md-9">
                     <div class="select-by-country">
                         <div class="form-group">
                             <label for="select-con">Select by Country</label>
                             <select class="form-control" id="select-con">
-                                <option value="select you country">select you country</option>
+                                <option value="selectCountry" class="select-all-country">Show all by country</option>
                             </select>
                           </div>
                     </div>
+                </div>
+                <div class="col-md-3">
+                    <!-- select by your country -->
+                    <div class="select-automatic-your-contry">
+                        <button class="common-btn contryname-btn">Your Country</button>
+                    </div>
+                    <!-- select by your country -->
                 </div>
                 <div class="col-md-6 lg-3">
                     <div class="single-coronabox world-name mb-30" >
@@ -64,7 +76,6 @@
                             <span><img src="assets/img/corona3.png" alt=""></span> 
                             <span class="counter-number total-recoverd counter"></span>
                         </div>
-                            
                         <h4>Total Recoverd</h4>
                     </div>
                 </div>
@@ -73,18 +84,36 @@
         </div>
     </section>
 
-    <script src="assets/js/jquery-3.3.1.min.js"></script>
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/waypoints.min.js"></script>
-    <script src="assets/js/counterup.min.js"></script>
-    <script src="assets/js/main.js"></script>
+
 
     <script>
 
         let url = "https://covid19.mathdro.id/api";
         let urlCountry = "https://covid19.mathdro.id/api/countries";
         
+        fetch('https://extreme-ip-lookup.com/json/')
+        .then( res => res.json())
+        .then(response => {
+            let iso = response.countryCode
+            document.querySelector('.contryname-btn').innerHTML = response.country;
 
+            document.querySelector('.contryname-btn').addEventListener('click',()=>{
+        fetch(`https://covid19.mathdro.id/api/countries/${response.country}`).then((res)=> res.json()).then(result=>{
+        document.querySelector('.world-name').style.display = 'none';
+        document.querySelector('.all-country').style.display = 'block';
+        document.querySelector('.all-country .contry-name').innerHTML = response.country;
+        document.querySelector('.all-country .country-flag').setAttribute('src', `https://www.countryflags.io/${iso}/flat/64.png`);
+        document.querySelector('.confarmed').innerHTML = result.confirmed.value;
+            document.querySelector('.total-death').innerHTML = result.deaths.value;
+        document.querySelector('.total-recoverd').innerHTML = result.recovered.value;
+
+    })
+})
+
+        })
+        .catch((data, status) => {
+            console.log('Request failed');
+        })
 
 /* for total */
 fetch(url)
@@ -93,6 +122,15 @@ fetch(url)
     document.querySelector('.confarmed').innerHTML = data.confirmed.value;
     document.querySelector('.total-death').innerHTML = data.deaths.value;
     document.querySelector('.total-recoverd').innerHTML = data.recovered.value;
+    document.querySelector('#select-con').addEventListener('change',()=>{
+        if(document.querySelector('#select-con').value =="selectCountry"){
+            document.querySelector('.confarmed').innerHTML = data.confirmed.value;
+            document.querySelector('.total-death').innerHTML = data.deaths.value;
+            document.querySelector('.total-recoverd').innerHTML = data.recovered.value;
+            document.querySelector('.world-name').style.display = 'block';
+            document.querySelector('.all-country').style.display = 'none';
+        }
+    })
   } );
 
 
@@ -116,8 +154,6 @@ fetch(url)
 
     document.querySelector('#select-con').addEventListener('change',()=>{
         data.countries.forEach(element => {
-          
-
             if(document.querySelector('#select-con').value == element.name){
               let  contryName = element.name
              let iso = element.iso2;
@@ -132,23 +168,14 @@ fetch(url)
                     document.querySelector('.total-recoverd').innerHTML = result.recovered.value;
 
                 })
-            }
-           
+            } 
         });
-        })
-
-  });
-
+    })
+});
 
 
 
 
-
-
-
-setTimeout(()=>{
-    $('.counter').counterUp({});
-},1500)
 
     </script>
 </body>

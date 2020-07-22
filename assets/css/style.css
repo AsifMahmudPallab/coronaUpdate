@@ -325,6 +325,7 @@ li{
         transition: .3s all linear;
         cursor: pointer;
         display: inline-block;
+        width: 100%;
 }
 .common-btn:focus,
 .common-btn:active{
@@ -382,3 +383,12 @@ section {
     height: 156px;
 }
 
+.app-header h2 {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.select-automatic-your-contry {
+    padding-top: 33px;
+}
